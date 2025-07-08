@@ -9,12 +9,12 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 BOT_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 AUTHORIZED_USERS = {
-    123456789: "Vikas",             # Replace with your Telegram ID
-    987654321: "Deepthi",           # Replace with Deepthi's Telegram ID
+    440324261: "Vikas",             
+    1177941894: "Deepthi",           
 }
 
 USERNAME_MAP = {
-    "Vikas": "@vikas",
+    "Vikas": "@gaddamvikas",
     "Deepthi": "@Deepthiramana"
 }
 
