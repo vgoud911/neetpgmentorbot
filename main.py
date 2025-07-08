@@ -1,5 +1,4 @@
 import os
-import datetime
 from flask import Flask, request
 import requests
 
@@ -9,121 +8,42 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 BOT_URL = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 AUTHORIZED_USERS = {
-    440324261: "Vikas",             
-    1177941894: "Deepthi",           
+    "vikas": 123456789,  # replace with your Telegram ID
+    "deepthi": 987654321  # replace with Deepthi's Telegram ID
 }
-
-USERNAME_MAP = {
-    "Vikas": "@gaddamvikas",
-    "Deepthi": "@Deepthiramana"
-}
-
-DAILY_LOG = {
-    "Vikas": {},
-    "Deepthi": {}
-}
-
-STREAKS = {
-    "Vikas": {"mcq1": 0, "mcq2": 0, "mcq3": 0, "anki": 0},
-    "Deepthi": {"mcq1": 0, "mcq2": 0, "mcq3": 0, "anki": 0}
-}
-
-def countdown_to_exam():
-    exam_date = datetime.date(2025, 8, 3)
-    today = datetime.date.today()
-    return (exam_date - today).days
 
 def send_message(chat_id, text):
     url = f"{BOT_URL}/sendMessage"
-    payload = {"chat_id": chat_id, "text": text, "parse_mode": "Markdown"}
+    payload = {"chat_id": chat_id, "text": text}
     requests.post(url, json=payload)
 
-@app.route('/', methods=["POST"])
+@app.route(f"/{BOT_TOKEN}", methods=["POST"])
 def webhook():
     data = request.get_json()
 
-    if "message" not in data:
-        return "ok"
+    if "message" in data:
+        chat_id = data["message"]["chat"]["id"]
+        text = data["message"].get("text", "")
 
-    msg = data["message"]
-    chat_id = msg["chat"]["id"]
-    user_id = msg["from"]["id"]
-    username = AUTHORIZED_USERS.get(user_id, None)
-
-    if username is None:
-        send_message(chat_id, "Unauthorized user.")
-        return "ok"
-
-    text = msg.get("text", "")
-    today = str(datetime.date.today())
-
-    # Init daily log
-    if today not in DAILY_LOG[username]:
-        DAILY_LOG[username][today] = {
-            "checkins": [],
-            "mcq_scores": {},
-            "anki": None,
-        }
-
-    # Command handlers
-    if text.startswith("/start"):
-        countdown = countdown_to_exam()
-        send_message(chat_id, f"ð *Good Morning {username}!*\n*NEET PG Countdown:* {countdown} days left!\nLet's crush this! ðª")
-    elif text.startswith("/checkin"):
-        DAILY_LOG[username][today]["checkins"].append(text)
-        send_message(chat_id, f"â Logged {text} for {username}. Keep going!")
-    elif text.startswith("/logmcq"):
-        session = text.split()[0][-1]
-        try:
-            score = int(text.split()[1])
-            DAILY_LOG[username][today]["mcq_scores"][f"mcq{session}"] = score
-            if score >= 30:
-                STREAKS[username][f"mcq{session}"] += 1
-            else:
-                STREAKS[username][f"mcq{session}"] = 0
-            send_message(chat_id, f"â MCQ {session} logged: {score}/40\nð¥ Streak: {STREAKS[username][f'mcq{session}']}")
-        except:
-            send_message(chat_id, "â ï¸ Use format: /logmcq1 35")
-    elif text.startswith("/loganki"):
-        try:
-            count = int(text.split()[1])
-            DAILY_LOG[username][today]["anki"] = count
-            if count >= 100:
-                STREAKS[username]["anki"] += 1
-            else:
-                STREAKS[username]["anki"] = 0
-            send_message(chat_id, f"ð§  Anki logged: {count} cards\nð¥ Streak: {STREAKS[username]['anki']}")
-        except:
-            send_message(chat_id, "â ï¸ Use format: /loganki 120")
-    elif text.startswith("/progress"):
-        log = DAILY_LOG[username][today]
-        msg = f"ð *Today's Progress - {username}*\n"
-        msg += f"Check-ins: {', '.join(log['checkins']) or 'None'}\n"
-        for k, v in log["mcq_scores"].items():
-            msg += f"{k.upper()}: {v}/40 | Streak: {STREAKS[username][k]}\n"
-        msg += f"Anki: {log['anki'] or 'Not logged'} | Streak: {STREAKS[username]['anki']}"
-        send_message(chat_id, msg)
-    elif text.startswith("/report"):
-        countdown = countdown_to_exam()
-        send_message(chat_id, f"ðï¸ *NEET PG Countdown:* {countdown} days left.\nUse /progress to view todayâs log.")
-    elif text.startswith("/ask"):
-        question = text[4:].strip()
-        if not question:
-            send_message(chat_id, "â Use: /ask Your question here")
+        if text.lower() == "/start":
+            send_message(chat_id, "Welcome to NEET PG Mentor Bot! 🔥\nLet’s crush NEET PG 2025!")
+        elif text.lower() == "/motivate":
+            send_message(chat_id, "Every question you solve gets you one step closer to your dream. Keep going! 💪")
+        elif text.lower() == "/checkin":
+            send_message(chat_id, "📍 Session check-in recorded.")
+        elif text.lower().startswith("/report"):
+            send_message(chat_id, "📊 Report logged. Great work!")
         else:
-            # Placeholder for AI response
-            response = f"ð¤ AI says: [This is a simulated reply to: '{question}']"
-            send_message(chat_id, response)
-    else:
-        send_message(chat_id, "â ï¸ Unknown command.")
+            send_message(chat_id, "I'm here to help you stay on track! Type /motivate or /checkin.")
+    
+    return "ok", 200
 
-    return "ok"
-    def set_webhook():
-        url = f"{BOT_URL}/setWebhook"
-        webhook_url = f"https://neetpgmentorbot.onrender.com/{BOT_TOKEN}"
-        response = requests.post(url, json={"url": webhook_url})
-        print("Webhook set:", response.text)
+def set_webhook():
+    url = f"{BOT_URL}/setWebhook"
+    webhook_url = f"https://neetpgmentorbot.onrender.com/{BOT_TOKEN}"
+    response = requests.post(url, json={"url": webhook_url})
+    print("Webhook set:", response.text)
 
-    if __name__ == "__main__":
-        set_webhook()
-        app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
+if __name__ == "__main__":
+    set_webhook()
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
