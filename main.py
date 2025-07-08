@@ -43,7 +43,7 @@ def webhook():
 
         if text == '/start':
             send_message(chat_id, f"🔥 Welcome {username}! Countdown to NEET PG 2025 has begun. Let's do this together! Type /menu to explore your options.")
-📅 *NEET PG Countdown:* {countdown_to_exam()} days left!
+ *NEET PG Countdown:* {countdown_to_exam()} days left!
 Type /menu to get started.")
         elif text == '/menu':
             send_message(chat_id, "*📋 Main Menu:*
