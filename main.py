@@ -118,5 +118,13 @@ def webhook():
         send_message(chat_id, "â ï¸ Unknown command.")
 
     return "ok"
-    if __name__ == "__main__":
+    def set_webhook():
+    url = f"{BOT_URL}/setWebhook"
+    webhook_url = f"https://neetpgmentorbot.onrender.com/{BOT_TOKEN}"
+    response = requests.post(url, json={"url": webhook_url})
+    print("Webhook set:", response.text)
+
+if __name__ == '__main__':
+    if BOT_TOKEN:
+        set_webhook()
         app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
