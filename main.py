@@ -43,7 +43,15 @@ def webhook():
 
         if text == '/start':
             send_message(chat_id, f"🔥 Welcome {username}! Countdown to NEET PG 2025 has begun. Let's do this together! Type /menu to explore your options.")
- *NEET PG Countdown:* {countdown_to_exam()} days left!
+ def handle_start(chat_id, username):
+    message = (
+        f"🔥 Welcome {username}!\n\n"
+        f"You're now being tracked for NEET PG 2025.\n"
+        f"📆 *NEET PG Countdown:* {countdown_to_exam()} days left!\n\n"
+        "You’ll get daily check-ins, reminders, and MCQ tracking.\n"
+        "Use /report to log your session or /progress to view your stats."
+    )
+    send_message(chat_id, message)
 Type /menu to get started.")
         elif text == '/menu':
             send_message(chat_id, "*📋 Main Menu:*
