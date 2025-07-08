@@ -45,16 +45,16 @@ def webhook():
             send_message(chat_id, f"🔥 Welcome {username}! Countdown to NEET PG 2025 has begun. Let's do this together! Type /menu to explore your options.")
  def handle_start(chat_id, username):
     message = (
-        f"🔥 Welcome {username}!\n\n"
+        f" Welcome {username}!\n\n"
         f"You're now being tracked for NEET PG 2025.\n"
-        f"📆 *NEET PG Countdown:* {countdown_to_exam()} days left!\n\n"
+        f" *NEET PG Countdown:* {countdown_to_exam()} days left!\n\n"
         "You’ll get daily check-ins, reminders, and MCQ tracking.\n"
         "Use /report to log your session or /progress to view your stats."
     )
     send_message(chat_id, message)
 Type /menu to get started.")
         elif text == '/menu':
-            send_message(chat_id, "*📋 Main Menu:*
+            send_message(chat_id, "* Main Menu:*
 "
                                   "/report - Log MCQ session
 "
@@ -69,7 +69,7 @@ Type /menu to get started.")
             send_message(chat_id, f"✅ {username}, your session has been logged at {now}. Keep going!")
         elif text == '/progress':
             scores = user_logs["mcq_scores"]
-            msg = "*📈 Your Progress:*
+            msg = "* Your Progress:*
 "
             for entry in scores[-5:]:
                 msg += f"{entry[0]} - {entry[1]}
@@ -86,7 +86,7 @@ Type /menu to get started.")
             send_message(chat_id, lb_msg)
         elif text == '/summary':
             total_sessions = len(user_logs["mcq_scores"])
-            send_message(chat_id, f"📊 *Daily Summary*
+            send_message(chat_id, f" *Daily Summary*
 Total MCQ Sessions: {total_sessions}
 You're doing great, {username}! 💪")
         else:
